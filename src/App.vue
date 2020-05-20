@@ -1,32 +1,73 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <app-drawer :drawer="drawer"></app-drawer>
+    <v-app-bar app v-if="user" color="primary" dark>
+      <!-- Toolbar just for desktop -->
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title class="hidden-sm-and-down headline font-weight-bold">Hercules</v-toolbar-title>
+      <v-spacer></v-spacer>
+
+      <!-- Searchbar for moblie and desktop -->
+      <v-text-field class="pt-5" label="Faça aqui sua pesquisa" append-icon="fas fa-search"></v-text-field>
+
+      <v-spacer></v-spacer>
+      <v-btn icon class="hidden-md-and-up">
+        <v-icon>fas fa-sign-out-alt</v-icon>
+      </v-btn>
+
+      <!-- Horizontal menu for desktop -->
+      <v-template class="hidden-sm-and-down">
+        <template>
+          <v-btn text>Página Inicial</v-btn>
+          <v-btn text>Turmas</v-btn>
+          <v-btn text>Professores</v-btn>
+          <v-btn text>Alunos</v-btn>
+        </template>
+
+        <v-btn icon dark v-for="item in items" :key="item.title">
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-btn>
+        <v-btn icon dark>
+          <v-icon @click="signout">fas fa-sign-out-alt</v-icon>
+        </v-btn>
+      </v-template>
+    </v-app-bar>
+
+    <v-content>
+      <!-- Main pages -->
+      <v-container v-if="user">
+        <router-view></router-view>
+      </v-container>
+
+      <!-- Login and sinin page -->
+      <router-view v-else></router-view>
+    </v-content>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { mapGetters } from "vuex";
+import { mapActions } from "vuex";
 
-#nav {
-  padding: 30px;
-}
+//import Drawer from "./components/shared/Drawer";
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+export default {
+  components: {
+    // appDrawer: Drawer
+  },
+  data: () => ({
+    //user: 1,
+    drawer: true,
+    items: [
+      { title: "E-mail", icon: "far fa-envelope", link: "" },
+      { title: "Alunos", icon: "fas fa-users-cog", link: "" }
+    ]
+  }),
+  computed: {
+    ...mapGetters(["user"])
+  },
+  methods: {
+    ...mapActions(["signout"])
+  }
+};
+</script>
