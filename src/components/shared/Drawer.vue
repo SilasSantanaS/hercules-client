@@ -8,7 +8,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>Jane Smith</v-list-item-title>
+            <v-list-item-title>{{ user.username }}</v-list-item-title>
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -17,7 +17,7 @@
       <v-divider></v-divider>
 
       <v-list dense>
-        <v-list-item v-for="item in items" :key="item.title" @click="kjk" link>
+        <v-list-item v-for="item in items" :key="item.title" :to="item.link" link>
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -31,9 +31,9 @@
   </v-card>
 </template>
 
-
-
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: {
     drawer: {
@@ -43,16 +43,23 @@ export default {
   },
   data: () => ({
     items: [
-      { title: "Página Principal", icon: "fas fa-laptop-house" },
-      { title: "Turmas", icon: "fas fa-user-plus" },
-      { title: "Professores", icon: "fas fa-chalkboard-teacher" },
-      { title: "Alunos", icon: "fas fa-users" },
+      { title: "Página Principal", icon: "fas fa-laptop-house", link: "/" },
+      { title: "Turmas", icon: "fas fa-user-plus", link: "/turmas" },
+      {
+        title: "Professores",
+        icon: "fas fa-chalkboard-teacher",
+        link: "/professores"
+      },
+      { title: "Alunos", icon: "fas fa-users", link: "alunos" },
       { title: "Campeonatos", icon: "fas fa-trophy" },
       { title: "Pagamentos", icon: "fas fa-credit-card" },
       { title: "Configurações", icon: "fas fa-tools" },
       { title: "+Mais", icon: "fas fa-plus-circle" }
     ]
-  })
+  }),
+  computed: {
+    ...mapGetters(["user"])
+  }
 };
 </script>
 

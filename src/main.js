@@ -7,12 +7,17 @@ import vuetify from "./plugins/vuetify";
 import VueApollo from "vue-apollo";
 import ApolloClient from "apollo-boost";
 
+import VueTheMask from "vue-the-mask";
+
 Vue.config.productionTip = false;
+
+Vue.use(VueTheMask);
 
 Vue.use(VueApollo);
 
 export const defaultClient = new ApolloClient({
-  uri: "http://localhost:4000/graphql/",
+  //uri: "http://localhost:4000/graphql/",
+  uri: "https://hercules-sports.herokuapp.com/graphql",
   fetchOptions: {
     credentials: "include",
   },

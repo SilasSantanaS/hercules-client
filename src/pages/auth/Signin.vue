@@ -1,5 +1,7 @@
 <template>
   <v-app>
+    <!-- Error alert -->
+    <app-alert v-if="error" :error="error"></app-alert>
     <div class="row">
       <!-- LEFT HALF -->
       <div class="col-sm-12 col-md-8">
@@ -40,15 +42,23 @@
           <!-- FORM -->
           <div class="row justify-center">
             <div class="col-10 col-md-6">
-              <v-text-field label="E-mail" placeholder="Digite seu e-mail" outlined v-model="email"></v-text-field>
-              <v-text-field
-                label="Senha"
-                placeholder="Digite seu senha"
-                outlined
-                type="password"
-                class="mt-n4"
-                v-model="password"
-              ></v-text-field>
+              <v-form v-model="isFormValid" lazy-validation ref="form">
+                <v-text-field
+                  label="E-mail"
+                  placeholder="Digite seu e-mail"
+                  outlined
+                  v-model="email"
+                  :rules="emailRules"
+                ></v-text-field>
+                <v-text-field
+                  label="Senha"
+                  placeholder="Digite seu senha"
+                  outlined
+                  type="password"
+                  v-model="password"
+                  :rules="passwordRules"
+                ></v-text-field>
+              </v-form>
             </div>
           </div>
 
@@ -64,7 +74,9 @@
               rounded
               large
               elevation="1"
-              @click="signin({ email, password })"
+              :loading="loading"
+              :disabled="!isFormValid"
+              @click="signinHandler"
             >Entrar no Hercules</v-btn>
           </div>
         </v-card>
@@ -103,15 +115,19 @@
 
 <script>
 import Signup from "../../components/auth/Signup";
+import Alert from "../../components/shared/Alert";
 
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
   components: {
-    appSignup: Signup
+    appSignup: Signup,
+    appAlert: Alert
   },
   data: () => ({
+    user: "",
+    isFormValid: true,
     items: [
       { icon: "fab fa-facebook", link: "" },
       { icon: "fab fa-linkedin", link: "" },
@@ -121,15 +137,29 @@ export default {
       { title: "Lembre-se de mim", link: "" },
       { title: "Esqueceu sua senha?", link: "" }
     ],
-    email: "alessia@gmail.com",
-    password: "123"
+    email: "",
+    password: "",
+
+    emailRules: [email => !!email || "E-mail é obrigatório"],
+    passwordRules: [
+      password => !!password || "Senha é obrigatória",
+      password => password.length > 2 || "Senha deve ter no mínimo 3 caracteres"
+    ]
   }),
 
   methods: {
-    ...mapActions(["signin"])
+    ...mapActions(["signin"]),
+    signinHandler() {
+      if (this.$refs.form.validate()) {
+        this.signin({
+          email: this.email,
+          password: this.password
+        });
+      }
+    }
   },
   computed: {
-    ...mapGetters(["user"])
+    ...mapGetters(["user", "error", "loading"])
   },
   watch: {
     user(value) {
